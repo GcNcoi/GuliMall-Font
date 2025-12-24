@@ -49,5 +49,9 @@ module.exports = {
     'comma-dangle': 'off',
     // 关闭「禁止多个空行」要求（加不加都允许）
     'no-multiple-empty-lines': 'off',
+    // 允许未使用变量
+    'no-unused-vars': 'off',
+    // 允许用 ==
+    'eqeqeq': 'off',
   }
 }

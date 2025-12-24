@@ -1,7 +1,13 @@
 <template>
     <div>
+        <el-switch v-model="draggable" active-text="开启拖拽" inactive-text="关闭拖拽">
+        </el-switch>
+        <el-button v-if="draggable" size="small" style="margin-left: 10px;" @click="batchSave"
+            type="primary">批量保存</el-button>
+        <el-button size="small" style="margin-left: 10px;" @click="batchDelete" type="danger">批量删除</el-button>
         <el-tree :data="menus" show-checkbox node-key="catId" :props="defaultProps" :expand-on-click-node="false"
-            :default-expanded-keys="expandedKey">
+            @node-drop="handleDrop" :allow-drop="allowDrop" :draggable="draggable" :default-expanded-keys="expandedKey"
+            ref="menuTree">
             <span class="custom-tree-node" slot-scope="{ node, data }">
                 <span>{{ node.label }}</span>
                 <span>
@@ -38,9 +44,14 @@
     </div>
 </template>
 <script>
+
 export default {
     data() {
         return {
+            pCid: [],
+            draggable: false,
+            updateNodes: [],
+            maxLevel: 0,
             dialogType: "",
             title: "",
             category: {
@@ -71,6 +82,58 @@ export default {
             }).then(({ data }) => {
                 this.menus = data.data
             })
+        },
+        batchSave() {
+            this.$http({
+                url: this.$http.adornUrl('/product/category/update/sort'),
+                method: 'post',
+                data: this.$http.adornData(this.updateNodes, false)
+            }).then(({ data }) => {
+                this.$message({
+                    message: '菜单排序成功',
+                    type: 'success'
+                });
+                // 刷新菜单列表
+                this.getMenus();
+                // 刷新展开的节点
+                this.expandedKey = this.pCid
+                this.updateNodes = []
+                this.maxLevel = 0
+            })
+        },
+        batchDelete() {
+            let catIds = [];
+            let catNames = [];
+            let checkedNodes = this.$refs.menuTree.getCheckedNodes();
+            for (let i = 0; i < checkedNodes.length; i++) {
+                catIds.push(checkedNodes[i].catId);
+                catNames.push(checkedNodes[i].name);
+            }
+            this.$confirm(`是否批量删除[${catNames}]菜单?`, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$http({
+                    url: this.$http.adornUrl('/product/category/delete'),
+                    method: 'post',
+                    data: this.$http.adornData(catIds, false)
+                }).then(({ data }) => {
+                    this.$message({
+                        message: '菜单批量删除成功',
+                        type: 'success'
+                    });
+                    // 刷新菜单列表
+                    this.getMenus();
+                    // 刷新展开的节点
+                    this.expandedKey = [this.category.parentCid]
+                })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });
+            });
         },
         submit() {
             if (this.dialogType === "add") {
@@ -172,6 +235,60 @@ export default {
                     message: '已取消删除'
                 });
             });
+        },
+        allowDrop(draggingNode, dropNode, type) {
+            this.countNodeLevel(draggingNode)
+            let deep = Math.abs(this.maxLevel - draggingNode.level + 1);
+            if (type === 'inner') {
+                return (deep + dropNode.level) <= 3
+            } else {
+                return deep + dropNode.parent.level <= 3
+            }
+        },
+        countNodeLevel(node) {
+            if (node.childNodes != null && node.childNodes.length > 0) {
+                for (let i = 0; i < node.childNodes.length; i++) {
+                    if (node.childNodes[i].level > this.maxLevel) {
+                        this.maxLevel = node.childNodes[i].level
+                    }
+                    this.countNodeLevel(node.childNodes[i])
+                }
+            }
+        },
+        handleDrop(draggingNode, dropNode, dropType, ev) {
+            let pCid = 0;
+            let siblings = null;
+            if (dropType === 'inner') {
+                pCid = dropNode.data.catId
+                siblings = dropNode.childNodes
+            } else {
+                pCid = dropNode.parent.data.catId === undefined ? 0 : dropNode.parent.data.catId
+                siblings = dropNode.parent.childNodes
+            }
+            this.pCid.push(pCid)
+            for (let i = 0; i < siblings.length; i++) {
+                if (siblings[i].data.catId === draggingNode.data.catId) {
+                    let catLevel = draggingNode.lLevel
+                    if (siblings[i].level != draggingNode.level) {
+                        // 当前节点的层级变化
+                        catLevel = siblings[i].level
+                        // 修改子节点的层级
+                        this.updateChildNodeLevel(siblings[i])
+                    }
+                    this.updateNodes.push({ catId: siblings[i].data.catId, sort: i, parentCid: pCid, catLevel: catLevel })
+                } else {
+                    this.updateNodes.push({ catId: siblings[i].data.catId, sort: i })
+                }
+            }
+        },
+        updateChildNodeLevel(node) {
+            if (node.childNodes.length > 0) {
+                for (let i = 0; i < node.childNodes.length; i++) {
+                    var cNode = node.childNodes[i].data
+                    this.updateNodes.push({ catId: cNode.catId, catLevel: node.childNodes[i].level })
+                    this.updateChildNodeLevel(node.childNodes[i])
+                }
+            }
         },
     },
     created() {
