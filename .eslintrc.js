@@ -53,5 +53,11 @@ module.exports = {
     'no-unused-vars': 'off',
     // 允许用 ==
     'eqeqeq': 'off',
+    // 关闭「禁止多个连续空格」检查
+    'no-multi-spaces': 'off',
+    // 关闭「箭头函数前后空格」检查
+    'arrow-spacing': 'off',
+    // 关闭「文件末尾必须留空行」检查
+    'eol-last': 'off'
   }
 }

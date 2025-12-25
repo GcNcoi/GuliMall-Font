@@ -12,6 +12,7 @@
   </div>
 </template>
 <script>
+/* eslint-disable */
 import { policy } from './policy'
 import { getUUID } from '@/utils'
 

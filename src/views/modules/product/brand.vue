@@ -20,6 +20,11 @@
       <el-table-column prop="name" header-align="center" align="center" label="品牌名">
       </el-table-column>
       <el-table-column prop="logo" header-align="center" align="center" label="品牌logo地址">
+        <template slot-scope="scope">
+          <!-- <el-image style="width: 100px; height: 80px" :src="scope.row.logo" fit="fill"></el-image> -->
+          <!-- <img style="width: 50%; height: 50%" :src="scope.row.logo"> -->
+          <img style="width: 160px; height: 80px;" :src="scope.row.logo" alt="品牌logo">
+        </template>
       </el-table-column>
       <el-table-column prop="descript" header-align="center" align="center" label="介绍">
       </el-table-column>
