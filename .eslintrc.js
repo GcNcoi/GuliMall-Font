@@ -58,6 +58,10 @@ module.exports = {
     // 关闭「箭头函数前后空格」检查
     'arrow-spacing': 'off',
     // 关闭「文件末尾必须留空行」检查
-    'eol-last': 'off'
+    'eol-last': 'off',
+    // 关闭注释后必须有空格的强制要求
+    'spaced-comment': 'off',
+    // 关闭大括号前必须有空格的检查
+    'space-before-blocks': 'off',
   }
 }
