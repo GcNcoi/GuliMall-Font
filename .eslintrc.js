@@ -63,5 +63,17 @@ module.exports = {
     'spaced-comment': 'off',
     // 关闭大括号前必须有空格的检查
     'space-before-blocks': 'off',
+    // allow async-await
+    'generator-star-spacing': 'off',
+    // allow debugger during development
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    // 关闭 Promise reject 必须是 Error 的检查
+    'prefer-promise-reject-errors': 'off', 
+    // 关闭模板字符串大括号检查
+    'no-template-curly-in-string': 'off',
+    // 关闭 "no-irregular-whitespace" 规则
+    "no-irregular-whitespace": "off",
+    // 关闭 no-array-constructor 规则
+    "no-array-constructor": "off"
   }
 }

@@ -1,16 +1,7 @@
 <template>
-  <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
-    :close-on-click-modal="false"
-    :visible.sync="visible"
-  >
-    <el-form
-      :model="dataForm"
-      :rules="dataRule"
-      ref="dataForm"
-      @keyup.enter.native="dataFormSubmit()"
-      label-width="120px"
-    >
+  <el-dialog :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" :visible.sync="visible">
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()"
+      label-width="120px">
       <el-form-item label="优惠卷类型" prop="couponType">
         <el-select v-model="dataForm.couponType" placeholder="请选择">
           <el-option label="全场赠券" :value="0"></el-option>
@@ -38,13 +29,8 @@
         <el-input-number :min="0" v-model="dataForm.minPoint"></el-input-number>
       </el-form-item>
       <el-form-item label="有效时间" prop="useTimeRange">
-        <el-date-picker
-          v-model="dataForm.useTimeRange"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间"
-        ></el-date-picker>
+        <el-date-picker v-model="dataForm.useTimeRange" type="daterange" range-separator="至" start-placeholder="开始时间"
+          end-placeholder="结束时间"></el-date-picker>
       </el-form-item>
       <el-form-item label="使用类型" prop="useType">
         <el-select v-model="dataForm.useType" placeholder="请选择">
@@ -60,13 +46,8 @@
         <el-input-number v-model="dataForm.publishCount" :min="0"></el-input-number>
       </el-form-item>
       <el-form-item label="领取日期" prop="enableStartTime">
-        <el-date-picker
-          v-model="dataForm.timeRange"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
+        <el-date-picker v-model="dataForm.timeRange" type="daterange" range-separator="至" start-placeholder="开始日期"
+          end-placeholder="结束日期"></el-date-picker>
       </el-form-item>
       <el-form-item label="优惠码" prop="code">
         <el-input v-model="dataForm.code" placeholder="优惠码"></el-input>
@@ -74,12 +55,7 @@
       <el-form-item label="领取所需等级" prop="memberLevel">
         <el-select v-model="dataForm.memberLevel" placeholder="请选择">
           <el-option :value="0" label="不限制"></el-option>
-          <el-option
-            v-for="item in memberLevels"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          ></el-option>
+          <el-option v-for="item in memberLevels" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -120,7 +96,7 @@ export default {
         memberLevel: "",
         publish: 0,
         timeRange: [],
-        useTimeRange:[]
+        useTimeRange: []
       },
       dataRule: {
         couponType: [
